@@ -6,25 +6,24 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 function WelcomeScreen({ onStart, lang, setLang }) {
   useEffect(() => {
-    const playAudioOnce = () => {
-      const audio = new Audio('/Sia.mp3.mp3');
-      audio.volume = 0.5;
-      audio.play().catch(() => {});
-      document.removeEventListener('touchstart', playAudioOnce);
-    };
-    document.addEventListener('touchstart', playAudioOnce);
-  }, []);
-  const handleStart = () => {
-    const audio = new Audio('/Sia_-_Unstoppable_CeeNaija.com_.mp3');
-    audio.volume = 1.0;
-    audio.play()
-      .then(() => {
-        console.log('🎵 Audio started successfully');
-      })
-      .catch((error) => {
-        console.warn('⚠️ Audio play failed:', error);
-      });
-    onStart();
+  const audio = new Audio('/Sia.mp3.mp3');
+  audio.volume = 0.5;
+  audio.currentTime = 0; // หรือ 9 ถ้าต้องการเริ่มวินาทีที่ 9
+  audio.play().catch((error) => {
+    console.warn('⚠️ Audio auto-play blocked:', error);
+  });
+
+  // บันทึก audio เป็น global เพื่อหยุดภายหลังถ้าต้องการ
+  window.__thurianxAudio = audio;
+
+  return () => {
+    // เมื่อออกจากหน้าจอนี้ ให้หยุดเพลง
+    audio.pause();
+    audio.currentTime = 0;
+  };
+}, []);
+
+  
   };
   
   const headings = {
